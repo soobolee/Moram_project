@@ -1,0 +1,39 @@
+package moram.management.controller;
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import moram.vo.MemberVO;
+import moram.vo.MoramMemberVO;
+
+/**
+ * Servlet 맴버의 신분, 정보를 수정하는 서블릿
+ */
+@WebServlet("/memberUpdate.do")
+public class memberUpdate extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+    public memberUpdate() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		request.setCharacterEncoding("utf-8");
+		
+		MemberVO vo = new MemberVO();
+		MoramMemberVO mo = new MoramMemberVO();
+		
+		vo.setMem_id(request.getParameter("id"));
+		vo.setMem_div(request.getParameter("div"));
+		
+		mo.setMem_id(request.getParameter(""));
+
+		
+	}
+
+}

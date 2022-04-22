@@ -1,0 +1,85 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>장소예약 현황</title>
+
+	<script type="text/javascript" src="../js/jquery-3.6.0.min.js"></script>
+	<link rel="stylesheet" href="/Moram/css/main.css">
+	
+	<style>
+	  html. body{
+	  	height: 100%;
+	  	width: 100%;
+	  }
+	  section{
+	    height: auto;
+	  }
+	
+		#payList div{
+			height: 200px;
+			margin: 30px;
+			margin-left : 10px;
+			margin-right: 180px;
+		}
+	</style>
+	
+	<script>
+		$(function(){
+			
+			$.ajax({
+				
+				url : '<%=request.getContextPath()%>/PlaceTimeRezList.do',
+				type : 'get',
+				error : function(xhr){
+					alert("상태 : " + xhr.status);
+				},
+				success : function(res){
+					if(res == "결제 내역이 확인되지 않습니다."){
+						
+						$('#payList').html("<div>결제 내역이 확인되지 않습니다.</div>");
+					
+					}else{
+					str = "";
+					$.each(res, function(i, v){
+						str += "<div id='"+i+"list' style='background:#e9e9e9;'>";
+						str += v.placepay_no;
+						str += v.placetime_no;
+						str += v.place_name;
+						str += v.placepay_date;
+						str += v.placepay_price;
+						str += v.placetime_stime;
+						str += v.placetime_etime;
+						str += "</div>";
+					})
+					$('#payList').html(str);		
+					}
+				},
+				dataType : 'json'
+			})
+			
+		
+			
+		})
+	</script>
+	
+</head>
+<body>
+<%@ include file="../static/header.jsp" %>
+	<section>
+		<div class="wrapper">
+			<h2 style="display:inline-block; margin-left:12px">장소 결제 내역 확인</h2>
+			
+			<div id="payList">
+<!-- 									loca = "location.href='http://localhost/Moram/mypage/refund.jsp?payNo=" + v.placepay_no;  -->
+			</div>
+			
+			
+		
+		</div>
+	</section>
+<%@ include file="../static/footer.jsp" %> 
+</body>
+</html>

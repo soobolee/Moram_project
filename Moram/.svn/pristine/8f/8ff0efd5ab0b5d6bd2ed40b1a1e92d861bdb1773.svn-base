@@ -1,0 +1,180 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>내 관심 모람 리스트</title>
+	<script type="text/javascript" src="../js/jquery-3.6.0.min.js"></script>
+	<link rel="stylesheet" href="/Moram/css/main.css">
+	
+	<style>
+		body{
+			margin: 0;
+		}
+		
+		
+		#morambtn, #classbtn{
+			cursor : pointer;
+			width: 250px;
+			height: 60px;
+			background-color: #e9e9e9;
+			font-size: 1.3em;
+			text-align: center;
+			line-height: 50px;
+			margin: 0 20px;
+			display : inline-block;
+		}
+		
+		label{
+			cursor:pointer;
+		}
+		
+		#btnMoem{
+			margin-top: 5%;
+			margin-left: 26%;	
+		}
+		
+		#contentlist{
+			height: 80px;
+			margin: 2%;
+			margin-left: 13%;
+			margin-top: 2%;
+			padding: 2%;
+			background: #e9e9e9;
+			margin-right: 20%;			
+		}
+		#title2{
+			margin-left: 13%;
+		}
+		
+		#contentlist div{
+			display: inline-block;
+		}
+	</style>
+	
+
+	
+	
+	<script>
+	
+		$(function(){
+			$.ajax({
+				
+				url : '<%=request.getContextPath()%>/PreferClassList.do',
+				dataType : 'json',
+				error : function(xhr){
+					alert("상태 : " + xhr.status);
+				},
+				success : function(res){
+					code = "";
+					
+					$.each(res, function(i, v){
+					code += "<div id='contentlist'>";
+					code += "<div>" + v.class_image + "</div>";
+					code += "<div>" + "클래스명 : " + v.class_name + "</div>";
+					code += "<div>" + v.class_info + "</div>";
+					code += "<div>" + "모람쌤 : " + v.mem_id + "</div>";
+					code += "<div>" + "주소 : " + v.class_addr + "</div>";
+					code += "<div>" + "주소 : " + v.class_rgn + "</div>";
+					code += "<div>" + "카테고리 : " + v.subject_no + "</div>";
+					code += "</div>";						
+					})
+					$('#preferlist').html(code);
+					}
+				
+			})
+	
+		
+	
+		$('#btnMoem #classbtn').on('click', function(){
+						
+				$.ajax({
+					
+					url : '<%=request.getContextPath()%>/PreferClassList.do',
+					dataType : 'json',
+					error : function(xhr){
+						alert("상태 : " + xhr.status);
+					},
+					success : function(res){
+						code = "";
+					
+						$.each(res, function(i, v){
+							code += "<div id='contentlist'>";
+							code += "<div> ../images/"+ v.class_image + "</div>";
+							code += "<div>" + "클래스명 : " + v.class_name + "</div>";
+							code += "<div>" + v.class_info + "</div>";
+							code += "<div>" + "모람쌤 : " + v.mem_id + "</div>";
+							code += "<div>" + "주소 : " + v.class_addr + "</div>";
+							code += "<div>" + "주소 : " + v.class_rgn + "</div>";
+							code += "<div>" + "카테고리 : " + v.subject_no + "</div>";
+							code += "</div>";						
+						})
+					 	
+						$('#preferlist').html(code);
+					  }
+						
+				})
+		})
+		
+		$('#btnMoem #morambtn').on('click', function(){
+							
+				$.ajax({
+				
+					url : '<%=request.getContextPath()%>/PreferMoramList.do',
+					dataType : 'json',
+					error : function(xhr){
+						alert("상태 : " + xhr.status);
+					},
+					success : function(res){
+
+					code = "";
+						$.each(res, function(i, v){
+						code = "<div id='contentlist'>";
+						code += "<div>" + v.mr_image + "</div>";
+						code += "<div>" + "모람명 : " + v.mr_name + "</div>";
+						code += "<div>" + "모람지기 : " + v.moramjigi + "</div>";
+						code += "<div>" + v.mr_info + "</div>";
+						code += "<div>" + "생성일 : " + v.mr_cdate + "</div>";
+						code += "<div>" + "정원 : " + v.mr_limit + "</div>";
+						code += "<div>" + "지역 : " + v.mr_rgn + "</div>";
+						code += "<div>" + "카테고리 : " + v.subject_no + "</div>";
+						code += "</div>";						
+						})
+					 
+						
+						$('#preferlist').html(code);
+					}
+				})
+		})
+			
+			
+		})	
+		
+	</script> 
+
+
+
+</head>
+<body>
+<%@ include file="../static/header.jsp" %>
+<section>
+  <div class="wrapper">
+    <div id ="title2" style="display:inline-block">
+      	<h2>관심 목록</h2>
+    </div>
+	  <div id="btnMoem">
+			<div id="classbtn">관심 클래스 보기</div>
+		
+			<div id="morambtn">관심 모람 보기</div>
+	  </div>
+	
+	<div id="preferlist">
+	</div>
+  </div>
+</section>
+<%@ include file="../static/footer.jsp" %>
+</body>
+</html>
+
+

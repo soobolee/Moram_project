@@ -1,0 +1,50 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style>
+img{
+	width: 200px;
+	height: 200px;
+}
+.mrimg{
+	display: inline-block;
+	margin: 10px;
+}
+
+</style>
+ <link rel="stylesheet" href="/Moram/css/main.css">
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="<%=request.getContextPath() %>/js/moramInfo.js"></script>
+<script>
+mrNo = '<%=session.getAttribute("mrNo")%>';
+imagesList();
+
+</script>
+</head>
+<body>
+</head>
+<body>
+<%@ include file="../static/header.jsp" %>
+
+	<a class="mrTab" id="main">메인</a>
+	<a class="mrTab" id="mrboard">게시판</a>
+	<a class="mrTab" id="album" >사진첩</a>
+	<a class="mrTab">채팅</a>
+	<a class="mrTab" id="schedule">스케쥴</a>
+	<input id="join" type="button" value="가입하기" hidden="true">
+	<input type="button" id="mrPrefer" value="관심등록" hidden="true">
+	
+<section>
+	<div id="mralbum_container">
+	
+	
+	</div>
+	
+</section>
+<%@ include file="../static/footer.jsp" %>
+</body>
+</html>

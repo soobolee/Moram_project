@@ -1,0 +1,110 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="/Moram/css/main.css">
+  
+  <style>
+   	#mainSection{ 
+   		width: 85%; 
+   	} 
+   	#mainPage{ 
+   		width: 100%; 
+   		height: 98%; 
+   		margin: 10px; 
+   	} 
+    #moram{ 
+    	display : inline-block;
+    	padding-top: 40px;
+    }  
+   	#fixmoram{ 
+   		width: 85%; 
+   	} 
+   	.btn{ 
+   		float: right; 
+   		margin-top: 50px; 
+   		
+   	} 
+   	#moramMain, #classMain{ 
+   		background: gray; 
+   	} 
+  	
+    #mainPage div{  
+ 	   		display: inline-block;  
+ 	   		height: 400px;  
+ 	   		width: 250px;  
+	   		margin: 30px;	  
+     }  
+  	#mainPage2 div{
+  		display : inline-block;
+  		height: 400px;
+  		width: 250px;
+  		margin: 30px;
+  	}
+   	 hr{  
+   	 		clear: both;  
+   	 }  
+  	
+  </style>
+  
+    <script>
+  	$(function(){
+  		
+  		$.ajax({
+  			url : '<%=request.getContextPath()%>/MainMoram.do',
+  			type : 'get',
+  			dataType : 'json',
+  			error : function(xhr){
+  				alert('상태 : ' + xhr.status);
+  			},
+  			success : function(res){
+  				code = "";
+  				
+  				$.each(res, function(i, v){
+  					code += "<div id='moramMain'>";
+  					code += v.mr_name;
+  					code += "</div>";
+  				})
+  				$('#mainPage').html(code);
+  				
+  			}
+  		})
+  		
+  		$.ajax({
+  			
+  			url : '<%=request.getContextPath()%>/MainClass.do',
+  			type : 'get',
+  			dataType : 'json',
+  			error : function(xhr){
+  				alert('상태 : ' + xhr.status);
+  			},
+  			success : function(res){
+	   				code = "";
+  				$.each(res, function(i, v){
+  					code += "<div id='classMain'>";
+   					code += v.class_name;
+   					code += "</div>";
+   				})
+   				$('#mainPage2').html(code);
+  			}
+  			
+  		})
+  		
+  	})
+  	
+  </script>
+  
+</head>
+<body>
+<%@ include file="../static/adminheader.jsp" %> 
+<%String sessionId = (String)session.getAttribute("sessionId"); %>
+	<section id="mainSection">관리자 메인 페이지 입니다 <%=sessionId %>>
+	
+	</section>
+	<%@ include file="../static/footer.jsp" %> 
+</body>
+</html>

@@ -1,0 +1,330 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="<%=request.getContextPath()%>/css/moramMain.css">
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+<script src="<%=request.getContextPath() %>/js/moramboard.js"></script>
+<script src="<%=request.getContextPath() %>/js/moramInfo.js"></script>
+
+<% 
+	
+	String mem_id = (String)session.getAttribute("sessionId");
+	session.setAttribute("mrNo", request.getParameter("mrNo"));
+
+	
+%>
+
+<script>
+//사이트 시작시
+$(function() {
+	
+//모람 번호 가져오기(moramMain애서)
+let moramNo = '<%=request.getParameter("mrNo")%>';
+let mrNo = '<%=request.getParameter("mrNo")%>';
+console.log("moramNo : " + mrNo);
+memId = '<%=mem_id%>';
+
+// 모람에 가입된 회원(모라미): 탈퇴하기 - 가입되어있으면서 모라미
+// 모람에 가입되지 않은 회원 : 가입하기, 관심설정 뜨게하기 - 0
+// 모람지기: 강퇴하기 - 가입되어있으면서 모람지기
+
+	//모람지기인지 체크
+let jigiChk = null;
+jigiChk = jigiChk1(mrNo);
+
+
+
+	//location.href="http://localhost/Moram/moram/moramCalendar.jsp?mrNo="+mrNo+"";
+	
+//모람에 가입되어있는지 확인
+let memChk = null
+memChk = memChk1(mrNo);
+	
+	
+
+	if(jigiChk == 1){//모람지기 일 때 
+		$('#exile').attr('hidden', false);
+		
+	}else if(memChk == 1){//모람지기가 아니고 회원일 때
+		$('#exit').attr('hidden', false);
+	
+	}else{//회원이 아닐 때
+		$('#join').attr('hidden', false);
+		$('#mrPrefer').attr('hidden', false);
+		
+	}
+
+	
+	console.log(moramNo);
+	//게시판 누르면 화면에 출력
+	$(document).on("click","#mrboard",function(){
+		if(jigiChk==0 && memChk == 0){
+			alert("모람에 가입된 모라미들만 조회할 수 있습니다.");
+			return false;
+		}
+		
+		$.ajax({
+			  url : "<%=request.getContextPath()%>/moram/mrboard.jsp",
+			  type : "get",
+			  data : {"mrNo" : mrNo},
+			  success : function(rtnHtml){
+				  $('#mrinfo__container').html(rtnHtml)
+			  },
+			  dataType : "html"
+		  });
+		
+	});
+	
+	//사진첩 누르면 화면에 출력
+	$(document).on("click","#album",function(){
+		if(jigiChk==0 && memChk == 0){
+			alert("모람에 가입된 모라미들만 조회할 수 있습니다.");
+			return false;
+		}
+		
+		location.href='album.jsp';
+		
+	});
+	
+	//메인 버튼 누르면 메인화면으로 이동
+	$('#main').on('click', function(){
+		location.href="/Moram/moram/moramInfo.jsp?mrNo="+mrNo+""
+	});
+	
+	$("#prefer").on("click",function(){
+		insertPrefer();
+	});
+	
+	//스케쥴버튼 누르면 화면에 스케쥴 보이기
+	$(document).on('click','#schedule', function(){
+		if(jigiChk==0 && memChk == 0){
+			alert("모람에 가입된 모라미들만 조회할 수 있습니다.");
+			return false;
+		}
+		location.href='schedule.jsp';
+	});
+	
+	
+	// 메인 로딩했을 때 모람 사진, 모람소개 가져오기 - 사진은 아직
+	$.ajax({
+		url : '<%=request.getContextPath()%>/GetMoramInfo.do',
+		type : 'get',
+		data : {"mrNo" : moramNo},
+		dataType : 'json',
+		success : function(res){
+			//console.log(res.mr_info);
+			$('#cont').append(res.mr_info);
+			$('#jigi').append(res.moramjigi);
+		},
+		error : function(xhr){
+			alert(xhr.status);
+		}	
+	})	
+	
+	// 모라미리스트 추가
+	$.ajax({
+		url : '<%=request.getContextPath()%>/GetAllMorami.do',
+		type: 'post',
+		data: {"mr_no": moramNo},
+		success : function(res){
+			if(res==''){
+				htmlCode = "모라미 : 없음";
+				
+			}else{
+				
+				htmlCode ="<table border='1' id='moramiList' style='text-align:center;'>";
+				htmlCode +="<tr><td>모라미 ID</td><td>";
+				 $.each(res, function(i,v){
+					htmlCode += "</td></tr>"
+					htmlCode += "<tr><td class='tdMem' style='width:100%;'>" + v.mem_id + "</td></tr>";
+					
+				});
+				 htmlCode += "</table><br><br>";
+			}
+				$("#moramis").html(htmlCode);
+				
+		},
+		error: function(xhr){
+			alert(xhr.status);
+		},
+		dataType : 'json'
+	})
+	
+	//모람 관심설정
+	chkMoramPrefer(mrNo);
+	$('#mrPrefer').on('click', function(){
+		if($("#mrPrefer").hasClass("btn-danger") === true) {
+			MoramNotPrefer(mrNo);
+		} 
+		else { 
+			MoramPrefer(mrNo);
+		}
+	});
+	
+	//모람 가입하기 --가입창 뜨게하기
+	$('#join').on('click', function(){
+		//모람에 가입되어있는지 확인
+		var num = memChk;
+	
+		//반환 숫자가 0이면 가입 가능
+		if(num == 0){
+			//가입할건지 물어보기
+			var input = confirm('모람에 가입하시겠습니까?');
+
+			if(input){
+				moramJoin(mrNo);
+				//새로고침
+				location.href="/Moram/moram/moramInfo.jsp?mrNo="+mrNo+""
+			}else{
+				return false;
+			}
+		}else{
+			alert("이미 가입된 모람입니다.");
+			return false;
+		}
+		
+	})
+	
+	
+	//모람의 가입한 회원 리스트 보이기(강퇴하기 위해)
+	 $('#exile').on('click', function(){
+		
+		var win = window.open("exileMorami.jsp?mrno="+mrNo, "PopupWin", "width=500,height=400");
+		
+// 		var memArray = {};
+// 		$.ajax({
+// 			url : '/Moram/GetAllMorami.do',
+// 			type: 'post',
+// 			data: {"mr_no": mrNo},
+// 			success : function(res){
+// 				htmlCode ="<p>모라미 목록</p> <table border='1' id='moramiList' style='text-align:center;'>";
+// 				htmlCode +="<tr><td>모라미 ID</td><td></td></tr>";
+// 				 $.each(res, function(i,v){
+// 					htmlCode += "<tr><td class='tdMem' style='width:200px;'>" + v.mem_id + "</td>";
+// 					htmlCode += "<td><input type='button' class='exbtn' data-id='"+ v.mem_id +"' value='강퇴'></td></tr>";
+					
+// 				});
+// 				 htmlCode += "</table>";
+				
+// 				 win.document.write(htmlCode);
+				
+				
+// 			},
+// 			error : function(xhr){
+// 				alert(xhr.status);
+				
+// 			}
+// 		});
+		
+	}); 
+	
+	
+	//모람 탈퇴하기
+	$('#exit').on('click', function(){
+		var answer = confirm("정말 탈퇴하시겠습니까?");
+		if(answer){
+			moramExit(mrNo);
+			//alert("회원 탈퇴했습니다.")
+			//새로고침
+			location.href="/Moram/moram/moramInfo.jsp?mrNo="+mrNo+""
+		}else{
+			return false;
+		}
+	})
+	//탈퇴하기 전에 물어보기 - 모람지기면 탈퇴 불가
+	//모라미면 정말 탈퇴하겠냐고 물어보고 탈퇴
+	
+
+})
+
+
+
+
+</script>
+<style>
+#cal{
+	width:800px;
+	height:550px;
+	
+
+}
+#cont {
+	display: inline-block;
+	float : left;
+	
+}
+table{
+	text-align: center;
+}
+.tdMem {
+	width : 100px;
+	height: 30px;
+	
+}
+.containers{
+	border: 1px solid black;
+	display: inline-block;
+	float : left;
+	width : 200px;
+}
+a:link { text-decoration: none; text-shadow: 0 0 24px; } 
+a:visited { text-decoration: none; text-shadow: 0 0 24px; }
+a:hover {text-decoration: none; text-shadow: 0 0 24px; color: #b0c4de}
+
+
+
+
+</style>
+</head>
+<body>
+<%@ include file="../static/header.jsp" %>
+	<a class="mrTab" id="main">메인</a>
+	<a class="mrTab" id="mrboard">게시판</a>
+	<a class="mrTab" id="album" >사진첩</a>
+	<a class="mrTab">채팅</a>
+	<a class="mrTab" id="schedule">스케쥴</a>
+	<input type="button" id="join" value="가입하기" hidden="true">
+	<input type="button" id="mrPrefer" value="관심등록" hidden="true">
+	
+<section>
+	<div id="mrinfo__container">
+	
+	<br>
+	<div class="containers">
+		<div id="photo">
+		모람사진
+		</div>
+		
+		<br><br><hr>
+	
+		<div  id="cont">
+			모람 소개 : <br>
+		</div>
+		
+		<br><br><hr>
+		
+		<div  id="member">
+			&lt; 모람멤버 > <br><br>
+			<div id="jigi">
+			모람지기 : 
+			</div>
+			<div id="moramis">
+			모라미 :
+			</div>
+		</div>
+	</div>
+	
+	<iframe id="cal" src="/Moram/moram/moramCalendar.jsp?mrNo=<%=request.getParameter("mrNo")%>" frameborder=0></iframe>
+</div>
+	<input id="exile" type="button" value="강퇴하기" hidden="true">
+	<input id="exit" type="button" value="탈퇴하기" hidden="true">
+</section>
+<%@ include file="../static/footer.jsp" %>
+
+</body>
+</html>
