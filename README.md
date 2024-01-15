@@ -15,9 +15,11 @@
 #### IDE
 - Eclipse IDE 4.16.0
 #### Lenguage, DB, WAS
-- JDK 1.8
+- JAVA8, JDK 1.8
 - ORACLE xe11
 - TOMCAT 7.0
+#### FrontEnd
+- JQuery, JavaScript, JSP
 #### Library
 - IBatis   [SQL 분리 별도 XML로 관리 위해]
 - Ojdbc    [Oracle JAVA DB 연결 위해]
