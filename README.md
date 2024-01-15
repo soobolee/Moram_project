@@ -1,6 +1,6 @@
 <img src="https://capsule-render.vercel.app/api?type=waving&color=D3D3D3&height=230&section=header&text=Moram&fontSize=50" />
 
-Spring을 배우기 전 Servlet의 원리를 이해하기 위해 만든 간단한 Servlet 프로젝트
+Spring을 공부하기 전 Servlet의 원리를 이해하기 위해 만든 간단한 Servlet 프로젝트
 
 ## 프로젝트 소개
 - <strong>"모여라~ 사람들!"</strong> 의 약자로 취미를 시작 하고싶지만, 어떻게 시작해야 할지 모르는 사람들을 위해 
@@ -12,10 +12,10 @@ Spring을 배우기 전 Servlet의 원리를 이해하기 위해 만든 간단�
 <hr />
 
 ## 개발멤버
-- 멤버1 [본인] : 테이블 설계, 게시판관련, 일정관련, 결제관련
+- 멤버1 <strong>[본인]</strong> : 테이블 설계, 게시판관련, 일정관련, 결제관련
 - 멤버2 : 개발일정조율, 관리자페이지, 고객센터, 공지사항
 - 멤버3 : 산출물 정리, 회원관련
-<hr>
+<hr />
 
 ## 개발환경
 #### IDE
